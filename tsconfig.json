@@ -1,9 +1,28 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compileOnSave": false,
   "files": [],
-  "references": [],
-  "compilerOptions": {
-    "ignoreDeprecations": "6.0"
-  }
+  "references": [
+    {
+      "path": "./apps/card-component-demo"
+    },
+    {
+      "path": "./packages/products-feature"
+    },
+    {
+      "path": "./packages/products-ui"
+    },
+    {
+      "path": "./packages/shared-models"
+    },
+    {
+      "path": "./packages/shared-ui"
+    },
+    {
+      "path": "./packages/shared-utils"
+    },
+    {
+      "path": "./apps/api"
+    }
+  ],
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false
 }

@@ -1,0 +1,15 @@
+.container {
+  font-family: 'Geist';
+}
+
+.product-details {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-md);
+  align-items: flex-start;
+}
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}

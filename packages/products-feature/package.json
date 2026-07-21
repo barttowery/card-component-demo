@@ -1,0 +1,23 @@
+{
+  "name": "@card-component-demo/products-feature",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "react-router-dom": "^7.18.1"
+  },
+  "devDependencies": {
+    "@card-component-demo/products-ui": "*",
+    "@card-component-demo/shared-models": "*"
+  }
+}

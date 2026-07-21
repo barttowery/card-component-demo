@@ -1,0 +1,54 @@
+import { useRef, useState, useEffect } from 'react';
+import styles from './product-card.module.css';
+import { ProductSummary } from '@card-component-demo/shared-models';
+
+export interface ProductCardProps {
+  product: ProductSummary;
+  onProductClicked: (product: ProductSummary) => void;
+}
+
+export function ProductCard({ product, onProductClicked }: ProductCardProps) {
+  const labelRef = useRef<HTMLLabelElement>(null);
+  const [ hasScrollbar, setHasScrollbar ] = useState(false);
+
+  useEffect(() => {
+    const element = labelRef.current;
+    if (!element) return;
+
+    //Check if vertical content overflows the visible height
+    const checkScroll = element.scrollHeight > element.clientHeight;
+    setHasScrollbar(checkScroll);
+  }, [])
+
+  return (
+    <li
+      className={styles['card']}
+      role="button"
+      onClick={() => onProductClicked(product)} tabIndex={0}
+      aria-label={`View details for ${product.title}`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onProductClicked(product);
+        }
+      }}
+    >
+      <div className={styles['card-content']}>
+        <h2>{product.title}</h2>
+        <label
+          ref={labelRef}
+          className={styles['card-description']}
+          {...(hasScrollbar ? { tabIndex:0 } : {})}
+        >
+          {product.description}
+        </label>
+        <label className={styles['card-price']}>${product.price.toFixed(2)}</label>
+      </div>
+      <div className={styles['card-image']}>
+        <img src={product.image} alt={product.imageAlt} />
+      </div>
+    </li>
+  );
+}
+
+export default ProductCard;

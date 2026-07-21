@@ -1,0 +1,14 @@
+.products-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  justify-content: flex-start;
+  padding-inline-start: 0px;
+}
+
+.no-products {
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--color-text-secondary);
+  font-family: 'Geist';
+}

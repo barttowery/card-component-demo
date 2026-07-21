@@ -1,107 +1,60 @@
-# New Nx Repository
+# Card Component Demo
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+This demo code was created as part of an interview take home assignment. I will not list the assignment as a whole in case that company continues to use this assignment.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+The key is a reusable Card component and render 3 to 5 sample product cards in a demo. It must use design tokens applied using standard CSS. It must use semantic HTML and follow accessibility best practices.
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/docs/technologies/typescript/introduction?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-🚀 If you haven't connected to Nx Cloud yet, [complete your setup here](https://cloud.nx.app/get-started). Get faster builds with remote caching, distributed task execution, and self-healing CI. [See how your workspace can benefit](#nx-cloud).
-## Generate a library
+## Technology/Packages Used
+This project uses many tools like:
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
-```
+- [Nx](https://nx.dev) - Installing Nx globally (`npm add --global nx@latest`) allows you to avoid using `npx` at the beginning of the below commands.
+- [Node](https://nodejs.org/en/download) - Version 24+ required for Storybook 10
+- [ReactJS](https://reactjs.org)
+- [Vite](https://vitejs.dev)
+- [TypeScript](https://www.typescriptlang.org)
+- [Storybook](https://storybook.js.org/)
+- [Tanstack Query](https://tanstack.com/query/latest)
+- [Axios](https://axios.rest/)
+- [ESLint](https://eslint.org)
+- [Prettier](https://prettier.io)
 
-## Run tasks
+## Project Architecture
 
-To build the library use:
+### Structure
+Follows the Nx approach with apps and packages. This project is broken apart the way a large project should be broken apart to demonstrate the proper approach rather than what I would normal do on a task this size. The project is created following [Atomic Design](https://atomicdesign.bradfrost.com/) principles.
 
-```sh
-npx nx run pkg1:build
-```
+### Packages
+This is the meat of the functionality. The following packages exist.
+- products-feature (`/packages/products-feature`) - Contains the product routes, hooks for retrieving the data and the pages for products.
+- products-ui (`/packages/products-ui`) - Contains the product UI components. All data is passed in via properties (makes unit testing better). Storybook is configured and can be run via `nx storybook products-ui`.
+- shared-models (`/packages/shared-models`) - Contains the models for the product (i.e. ProductSummary).
+- shared-ui (`/packages/shared-ui`) - The shared component library for the solution. This is the bulk of the actual assignment given. Includes Jest testing. Storybook is configured and can be run via `nx storybook shared-ui`. These are intended to be shared components that could be used across multiple web sites. 
+- shared-utils (`/packages/shared-utils`) - Contains a ThemeProvider. One piece of the assignment was to apply design tokens to CSS properties in the application. The design tokens are set and applied via the ThemeProvider.
 
-To run any task with Nx use:
+Note that in a larger project, I would create a shared folder to contain the models, ui and utils packages (along with other potentials such as data and mocks). Also each domain area such as products would have its own folder with packages underneath.
 
-```sh
-npx nx run <project-name>:<target>
-```
+### API
+A very simple Express app to send the products and product details. The data is hardcoded. Run the API by using `nx serve api`. This runs the API on http://localhost:3333.
 
-These targets are either [inferred automatically](https://nx.dev/docs/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+### Web App
+A React application that includes the top level routing and wraps the routed components in the Tanstack QueryClientProvider and the custom ThemeProvider. The routing details for products is retrieved from the `products-feature` package.
 
-[More about running tasks in the docs &raquo;](https://nx.dev/docs/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Note that I find it better in larger projects to push routing for domain areas into those packages. This allows domain areas to be owned by groups and prevents some merge conflicts. Run the web application by using `nx serve card-component-demo`. This runs the web application on http://localhost:4200.
 
-## Versioning and releasing
+## Shared Components
 
-To version and release the library use
+### ProductCard
+A product card component that displays the image, title, description and price of the product.
 
-```
-npx nx release
-```
+Key Decisions:
+- Debated between `<article>` and `<li>` tags for the card. Either would work from a semantic perspective. Since this was to display a list of products, I went with `<li>`. While that still works for individual product cards, if the ProductCard component was to be used individually, I might reconsider this. Note that accessibility tests do complain about the `<li>` tag when there is no wrapping `<ul>`.
+- Passed the entire product object via a typed prop (ProductSummary) rather than separating the properties. I feel it keeps code cleaner unless there is good reason to separate the fields into individual properties.
+- From a display perspective, we want the image at the top, but for screen readers, the title is more important. In the HTML, the image is below the text to make the text more important to screen readers. I used the flexbox order property to push the display of the image above the text.
+- Responsiveness - The card will be between 240px and 360px. This will handle wider screens, mobile, etc. Other approaches could include different sizes of text or the image based on the screen size (i.e. mobile could use a smaller
+font size than a desktop screen).
+- Vertical Responsiveness - The card is set to a fixed height of 600px (to keep consistency). The image has a height of 250px and the title and price take up the required space. If the description is too long, it will add a vertical scrollbar (other options would be a text-ellipsis or limit lines, etc.).
+- onProductClicked vs Router Navigate - The cards emit an onProductClicked event when the card is clicked rather than navigating directly via the link provided with the product. This makes the shared component more reusable by letting the consuming package decide how to navigate or react to the click. The actual navigation is handled via the Products component in the products-feature package.
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+### ProductCardList
+Very simple unordered list that maps the products to the ProductCard component
 
-[Learn more about Nx release &raquo;](https://nx.dev/docs/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Keep TypeScript project references up to date
-
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
-
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
-
-```sh
-npx nx sync
-```
-
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
-
-```sh
-npx nx sync:check
-```
-
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
-
-## Nx Cloud
-
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/docs/features/ci-features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/docs/features/ci-features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/docs/features/ci-features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/docs/features/ci-features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Set up CI (non-Github Actions CI)
-
-**Note:** This is only required if your CI provider is not GitHub Actions.
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/docs/features/ci-features?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/docs/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## 🔗 Learn More
-
-- [Nx Documentation](https://nx.dev/docs)
-- [Crafting Your Workspace Tutorial](https://nx.dev/docs/getting-started/tutorials/crafting-your-workspace)
-- [Module Boundaries](https://nx.dev/docs/features/enforce-module-boundaries)
-- [Releasing Packages](https://nx.dev/docs/features/manage-releases)
-- [Nx Plugins](https://nx.dev/docs/concepts/nx-plugins)
-- [Nx Cloud](https://nx.dev/nx-cloud)
-
-## 💬 Community
-
-Join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [X (Twitter)](https://twitter.com/nxdevtools)
-- [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [YouTube](https://www.youtube.com/@nxdevtools)
-- [Blog](https://nx.dev/blog)

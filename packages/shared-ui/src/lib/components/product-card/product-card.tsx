@@ -22,7 +22,7 @@ export function ProductCard({ product, onProductClicked }: ProductCardProps) {
   }, [])
 
   return (
-    <li
+    <article
       className={styles['card']}
       onClick={() => onProductClicked(product)} tabIndex={0}
       aria-label={`View details for ${product.title}`}
@@ -44,10 +44,10 @@ export function ProductCard({ product, onProductClicked }: ProductCardProps) {
         </label>
         <label className={styles['card-price']}>{formatCurrency(product.price)}</label>
       </div>
-      <div className={styles['card-image']}>
+      <figure className={styles['card-image']}>
         <img src={product.image} alt={product.imageAlt} />
-      </div>
-    </li>
+      </figure>
+    </article>
   );
 }
 

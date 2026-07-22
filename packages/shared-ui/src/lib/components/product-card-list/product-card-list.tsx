@@ -2,12 +2,12 @@ import { ProductSummary } from '@card-component-demo/shared-models';
 import ProductCard from '../product-card/product-card';
 import styles from './product-card-list.module.css';
 
-export interface ProductCardProps {
+export interface ProductCardListProps {
   products: ProductSummary[];
   onProductClicked: (product: ProductSummary) => void;
 }
 
-export function ProductCardList({ products, onProductClicked }: ProductCardProps) {
+export function ProductCardList({ products, onProductClicked }: ProductCardListProps) {
   if (!products || products.length === 0) {
     return <div className={styles['no-products']}>No products available</div>;
   }
@@ -15,7 +15,9 @@ export function ProductCardList({ products, onProductClicked }: ProductCardProps
   return (
     <ul className={styles['products-list']}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} onProductClicked={onProductClicked} />
+        <li key={product.id}>
+          <ProductCard product={product} onProductClicked={onProductClicked} />
+        </li>
       ))}
     </ul>
   );

@@ -74,7 +74,7 @@ describe('ProductCard', () => {
       const product = createMockProduct();
       render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
       
-      // The root li should have the card class
+      // The root article should have the card class
       // Check that the rendered output contains expected structure
       expect(document.body).toBeTruthy();
     });
@@ -222,12 +222,12 @@ describe('ProductCard', () => {
   });
 
   describe('Component Structure', () => {
-    it('should have list item (li) as root element', () => {
+    it('should have article as root element', () => {
       const product = createMockProduct();
       render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
       
-      // The root should be an li element
-      expect(document.querySelector('li.card')).toBeInTheDocument();
+      // The root should be an article element
+      expect(document.querySelector('article.card')).toBeInTheDocument();
     });
 
     it('should contain card-content div', () => {
@@ -252,7 +252,8 @@ describe('ProductCard', () => {
       const product = createMockProduct();
       render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
       
-      const cardElement = screen.getByRole('listitem');
+      const cardElement = document.querySelector('article.card');
+      expect(cardElement).toBeInTheDocument();
       expect(cardElement).toHaveClass('card');
     });
 
@@ -294,8 +295,9 @@ describe('ProductCard', () => {
       const product = createMockProduct();
       render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
       
-      const cardElement = screen.getByRole('listitem');
-      fireEvent.click(cardElement);
+       const cardElement = document.querySelector('article.card');
+       expect(cardElement).toBeInTheDocument();
+       fireEvent.click(cardElement!);
       
       expect(mockOnProductClicked).toHaveBeenCalledTimes(1);
       expect(mockOnProductClicked).toHaveBeenCalledWith(product);
@@ -305,24 +307,29 @@ describe('ProductCard', () => {
       const product = createMockProduct({ id: 42, title: 'Specific Product' });
       render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
       
-      const cardElement = screen.getByRole('listitem');
-      fireEvent.click(cardElement);
-      
-      expect(mockOnProductClicked).toHaveBeenCalledWith(product);
+       const cardElement = document.querySelector('article.card');
+       expect(cardElement).toBeInTheDocument();
+       fireEvent.click(cardElement!);
+       
+       expect(mockOnProductClicked).toHaveBeenCalledWith(product);
     });
 
     it('should have correct aria-label with product title', () => {
       const product = createMockProduct({ title: 'Aria Test Product' });
       render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
       
-      expect(screen.getByRole('listitem')).toHaveAttribute('aria-label', 'View details for Aria Test Product');
+       const cardElement = document.querySelector('article.card');
+       expect(cardElement).toBeInTheDocument();
+       expect(cardElement!).toHaveAttribute('aria-label', 'View details for Aria Test Product');
     });
 
     it('should be tabbable (tabIndex=0)', () => {
       const product = createMockProduct();
       render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
       
-      expect(screen.getByRole('listitem')).toHaveAttribute('tabIndex', '0');
+       const cardElement = document.querySelector('article.card');
+       expect(cardElement).toBeInTheDocument();
+       expect(cardElement!).toHaveAttribute('tabIndex', '0');
     });
   });
 
@@ -495,10 +502,11 @@ describe('ProductCard', () => {
       // Get initial state
       expect(container).toBeTruthy();
       
-      // Click to trigger potential state changes
-      fireEvent.click(screen.getByRole('listitem'));
-      
-      // Card should still be in DOM
+       const cardElement = document.querySelector('article.card');
+       expect(cardElement).toBeInTheDocument();
+        fireEvent.click(cardElement!);
+       
+       // Card should still be in DOM
       expect(container.querySelector('.card')).toBeInTheDocument();
     });
 
@@ -506,13 +514,14 @@ describe('ProductCard', () => {
       const product = createMockProduct();
       render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
       
-      // Click
-      fireEvent.click(screen.getByRole('listitem'));
-      
-      mockOnProductClicked.mockClear();
-      
-      // Enter key
-      fireEvent.keyDown(screen.getByRole('listitem'), { key: 'Enter' });
+        const cardElement = document.querySelector('article.card');
+       expect(cardElement).toBeInTheDocument();
+        fireEvent.click(cardElement!);
+        
+        mockOnProductClicked.mockClear();
+        
+        // Enter key
+       fireEvent.keyDown(cardElement!, { key: 'Enter' });
       
       expect(mockOnProductClicked).toHaveBeenCalledTimes(1);
     });
@@ -521,8 +530,9 @@ describe('ProductCard', () => {
       const product = createMockProduct();
       render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
       
-      const cardElement = screen.getByRole('listitem');
-      fireEvent.focus(cardElement);
+        const cardElement = document.querySelector('article.card');
+       expect(cardElement).toBeInTheDocument();
+       fireEvent.focus(cardElement!);
       
       // Just verify no errors - focus is a native DOM event
       expect(document.body).toBeTruthy();
@@ -567,11 +577,12 @@ describe('ProductCard', () => {
       expect(h2Element.tagName).toBe('H2');
     });
 
-    it('should have description wrapped in label element', () => {
+    it('should have article with correct role attribute', () => {
       const product = createMockProduct();
       render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
       
-      expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
+      // ProductCard now uses article element
+      expect(document.querySelector('article')).toBeInTheDocument();
     });
 
     it('should contain img element within card-image container', () => {

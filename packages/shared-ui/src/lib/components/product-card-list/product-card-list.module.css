@@ -4,6 +4,7 @@
   gap: var(--spacing-md);
   justify-content: flex-start;
   padding-inline-start: 0px;
+  list-style-type: none;
 }
 
 .no-products {

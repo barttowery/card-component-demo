@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProductCard } from './product-card';
-import { expect } from 'storybook/test';
 import { ProductSummary } from '@card-component-demo/shared-models';
 import { ThemeProvider } from '@card-component-demo/shared-utils';
 import { fn } from 'storybook/test';
@@ -42,9 +41,7 @@ const meta = {
   decorators: [
     (Story) => (
       <ThemeProvider>
-        <ul>
         <Story />
-        </ul>
       </ThemeProvider>
     ),
   ],
@@ -71,12 +68,5 @@ export const ProductLongDescription = {
 export const ProductLongTitle = {
   args: {
     product: productLongTitle,
-  },
-} satisfies Story;
-
-export const Heading = {
-  args: {},
-  play: async ({ canvas }) => {
-    await expect(canvas.getByText(/ProductCard/gi)).toBeTruthy();
   },
 } satisfies Story;

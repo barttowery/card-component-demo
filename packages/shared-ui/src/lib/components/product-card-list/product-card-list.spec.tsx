@@ -244,9 +244,9 @@ describe('ProductCardList', () => {
       ];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      // The ProductCard renders an li with class card
-      const listItems = document.querySelectorAll('li.card');
-      expect(listItems).toHaveLength(2);
+      // The ProductCard renders a article with class card inside li
+      const cards = document.querySelectorAll('article.card');
+      expect(cards).toHaveLength(2);
     });
 
     it('should render product titles in correct order', () => {
@@ -282,8 +282,9 @@ describe('ProductCardList', () => {
       const products = [createMockProduct({ id: 1, title: 'Clickable Product' })];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      const listItem = screen.getByRole('listitem');
-      fireEvent.click(listItem);
+      // The click handler is on the article element inside the list item
+      const cardArticle = screen.getByRole('article');
+      fireEvent.click(cardArticle);
 
       expect(mockOnProductClicked).toHaveBeenCalledTimes(1);
     });
@@ -292,24 +293,27 @@ describe('ProductCardList', () => {
       const products = [createMockProduct({ id: 42, title: 'Specific Product' })];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      const listItem = screen.getByRole('listitem');
-      fireEvent.click(listItem);
+      // The click handler is on the article element inside the list item
+      const cardArticle = screen.getByRole('article');
+      fireEvent.click(cardArticle);
 
       expect(mockOnProductClicked).toHaveBeenCalledWith(products[0]);
     });
 
-    it('should have correct aria-label on list items', () => {
+    it('should have correct aria-label on cards', () => {
       const products = [createMockProduct({ id: 1, title: 'Aria Test Product' })];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      expect(screen.getByRole('listitem')).toHaveAttribute('aria-label', 'View details for Aria Test Product');
+      // The article element has the aria-label attribute
+      expect(screen.getByRole('article')).toHaveAttribute('aria-label', 'View details for Aria Test Product');
     });
 
     it('should be tabbable (tabIndex=0)', () => {
       const products = [createMockProduct({ id: 1, title: 'Tab Test' })];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      expect(screen.getByRole('listitem')).toHaveAttribute('tabIndex', '0');
+      // The article element has tabIndex=0
+      expect(screen.getByRole('article')).toHaveAttribute('tabIndex', '0');
     });
 
     it('should call onProductClicked with correct product for multiple items', () => {
@@ -319,43 +323,47 @@ describe('ProductCardList', () => {
       ];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      const listItems = screen.getAllByRole('listitem');
-      fireEvent.click(listItems[1]);
+      // Get the articles (ProductCard elements) inside list items
+      const cardArticles = screen.getAllByRole('article');
+      fireEvent.click(cardArticles[1]);
 
       expect(mockOnProductClicked).toHaveBeenCalledWith(products[1]);
     });
 
-    it('should handle mouse over event on list items', () => {
+    it('should handle mouse over event on cards', () => {
       const products = [createMockProduct({ id: 1, title: 'Hover Test' })];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      const listItem = screen.getByRole('listitem');
+      // The article element is the one that receives events
+      const cardArticle = screen.getByRole('article');
       
       // Just verify no errors - mouse events are native DOM events
       expect(() => {
-        fireEvent.mouseOver(listItem);
+        fireEvent.mouseOver(cardArticle);
       }).not.toThrow();
     });
 
-    it('should handle focus event on list items', () => {
+    it('should handle focus event on cards', () => {
       const products = [createMockProduct({ id: 1, title: 'Focus Test' })];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      const listItem = screen.getByRole('listitem');
+      // The article element is the one that receives focus
+      const cardArticle = screen.getByRole('article');
       
       expect(() => {
-        fireEvent.focus(listItem);
+        fireEvent.focus(cardArticle);
       }).not.toThrow();
     });
 
-    it('should handle blur event on list items', () => {
+    it('should handle blur event on cards', () => {
       const products = [createMockProduct({ id: 1, title: 'Blur Test' })];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      const listItem = screen.getByRole('listitem');
+      // The article element is the one that receives focus events
+      const cardArticle = screen.getByRole('article');
       
       expect(() => {
-        fireEvent.blur(listItem);
+        fireEvent.blur(cardArticle);
       }).not.toThrow();
     });
   });
@@ -549,7 +557,8 @@ describe('ProductCardList', () => {
 
       expect(container).toBeTruthy();
 
-      fireEvent.click(screen.getByRole('listitem'));
+      // Click the article element
+      fireEvent.click(screen.getByRole('article'));
 
       // List should still be in DOM
       expect(document.querySelector('ul.products-list')).toBeInTheDocument();
@@ -585,19 +594,20 @@ describe('ProductCardList', () => {
       ];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      const listItems = screen.getAllByRole('listitem');
+      // Get the article elements (ProductCard components)
+      const cardArticles = screen.getAllByRole('article');
       
-      fireEvent.click(listItems[0]);
+      fireEvent.click(cardArticles[0]);
       expect(mockOnProductClicked).toHaveBeenCalledWith(products[0]);
 
       mockOnProductClicked.mockClear();
 
-      fireEvent.click(listItems[1]);
+      fireEvent.click(cardArticles[1]);
       expect(mockOnProductClicked).toHaveBeenCalledWith(products[1]);
 
       mockOnProductClicked.mockClear();
 
-      fireEvent.click(listItems[2]);
+      fireEvent.click(cardArticles[2]);
       expect(mockOnProductClicked).toHaveBeenCalledWith(products[2]);
     });
 
@@ -670,14 +680,15 @@ describe('ProductCardList', () => {
       ];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      const listItems = screen.getAllByRole('listitem');
+      // Get the article elements (ProductCard components)
+      const cardArticles = screen.getAllByRole('article');
       
-      fireEvent.click(listItems[0]);
+      fireEvent.click(cardArticles[0]);
       expect(mockOnProductClicked).toHaveBeenCalledWith(products[0]);
 
       mockOnProductClicked.mockClear();
 
-      fireEvent.click(listItems[1]);
+      fireEvent.click(cardArticles[1]);
       expect(mockOnProductClicked).toHaveBeenCalledWith(products[1]);
     });
 
@@ -725,7 +736,7 @@ describe('ProductCardList', () => {
       ];
       render(<ProductCardList products={products} onProductClicked={mockOnProductClicked} />);
 
-      expect(document.querySelectorAll('li.card')).toHaveLength(2);
+      expect(document.querySelectorAll('article.card')).toHaveLength(2);
     });
 
     it('should apply card-content CSS class within ProductCards', () => {

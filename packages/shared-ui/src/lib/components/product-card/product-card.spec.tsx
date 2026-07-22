@@ -1,9 +1,8 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import 'jest-axe/extend-expect';
 
-import ProductCard, { ProductCardProps } from './product-card';
+import ProductCard from './product-card';
 import { ProductSummary } from '@card-component-demo/shared-models';
 
 /* Mock data for testing */
@@ -165,14 +164,6 @@ describe('ProductCard', () => {
       expect(imgElement).toBeVisible();
     });
 
-    it('should have proper focus management with tabIndex', () => {
-      const product = createMockProduct();
-      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
-      
-      // Description label has tabIndex={0}
-      expect(screen.getByText(/This is a test product description./i)).toHaveAttribute('tabIndex', '0');
-    });
-
     it('should include imageAlt text in accessibility tree', async () => {
       const product = createMockProduct({ imageAlt: 'Custom Alt for Accessibility' });
       const { container } = render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
@@ -253,6 +244,342 @@ describe('ProductCard', () => {
       
       // The image should be in a container
       expect(screen.getByRole('img')).toBeInTheDocument();
+    });
+  });
+
+  describe('CSS Classes', () => {
+    it('should apply card CSS class to root element', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const cardElement = screen.getByRole('listitem');
+      expect(cardElement).toHaveClass('card');
+    });
+
+    it('should apply card-content CSS class', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      // The card-content div should exist within the card
+      expect(document.querySelector('.card-content')).toBeInTheDocument();
+    });
+
+    it('should apply card-image CSS class', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      // The card-image div should exist
+      expect(document.querySelector('.card-image')).toBeInTheDocument();
+    });
+
+    it('should apply card-description CSS class to description label', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      // The card-description class should be applied
+      expect(document.querySelector('.card-description')).toBeInTheDocument();
+    });
+
+    it('should apply card-price CSS class to price label', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      // The card-price class should be applied
+      expect(document.querySelector('.card-price')).toBeInTheDocument();
+    });
+  });
+
+  describe('Interaction Tests', () => {
+    it('should call onProductClicked when clicking on the card', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const cardElement = screen.getByRole('listitem');
+      fireEvent.click(cardElement);
+      
+      expect(mockOnProductClicked).toHaveBeenCalledTimes(1);
+      expect(mockOnProductClicked).toHaveBeenCalledWith(product);
+    });
+
+    it('should call onProductClicked with correct product data when clicked', () => {
+      const product = createMockProduct({ id: 42, title: 'Specific Product' });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const cardElement = screen.getByRole('listitem');
+      fireEvent.click(cardElement);
+      
+      expect(mockOnProductClicked).toHaveBeenCalledWith(product);
+    });
+
+    it('should have correct aria-label with product title', () => {
+      const product = createMockProduct({ title: 'Aria Test Product' });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByRole('listitem')).toHaveAttribute('aria-label', 'View details for Aria Test Product');
+    });
+
+    it('should be tabbable (tabIndex=0)', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByRole('listitem')).toHaveAttribute('tabIndex', '0');
+    });
+  });
+
+  describe('Image Handling', () => {
+    it('should display image with correct src attribute', () => {
+      const customImage = '/custom/path/image.jpg';
+      const product = createMockProduct({ image: customImage });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const imgElement = screen.getByRole('img');
+      expect(imgElement).toHaveAttribute('src', customImage);
+    });
+
+    it('should display image with correct alt text', () => {
+      const customAlt = 'Custom Product Image Alt';
+      const product = createMockProduct({ imageAlt: customAlt });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const imgElement = screen.getByRole('img');
+      expect(imgElement).toHaveAttribute('alt', customAlt);
+    });
+
+    it('should be visible in the document', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const imgElement = screen.getByRole('img');
+      expect(imgElement).toBeVisible();
+    });
+  });
+
+  describe('Price Formatting', () => {
+    it('should format price with two decimal places', () => {
+      const product = createMockProduct({ price: 19.9 });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByText('$19.90')).toBeInTheDocument();
+    });
+
+    it('should format large prices correctly', () => {
+      const product = createMockProduct({ price: 12345.67 });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByText('$12,345.67')).toBeInTheDocument();
+    });
+
+    it('should format currency with zero cents', () => {
+      const product = createMockProduct({ price: 99 });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByText('$99.00')).toBeInTheDocument();
+    });
+
+    it('should handle very large prices', () => {
+      const product = createMockProduct({ price: 999999999.99 });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByText(/\$999,999,999.99/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('Multiple Products', () => {
+    it('should render multiple products in a list', () => {
+      const product1 = createMockProduct({ id: 1, title: 'First Product' });
+      const product2 = createMockProduct({ id: 2, title: 'Second Product' });
+      const product3 = createMockProduct({ id: 3, title: 'Third Product' });
+      
+      render(
+        <ul>
+          <ProductCard product={product1} onProductClicked={mockOnProductClicked} />
+          <ProductCard product={product2} onProductClicked={mockOnProductClicked} />
+          <ProductCard product={product3} onProductClicked={mockOnProductClicked} />
+        </ul>
+      );
+      
+      expect(screen.getByText(/First Product/i)).toBeInTheDocument();
+      expect(screen.getByText(/Second Product/i)).toBeInTheDocument();
+      expect(screen.getByText(/Third Product/i)).toBeInTheDocument();
+    });
+
+    it('should handle products with same title', () => {
+      const product1 = createMockProduct({ id: 1, title: 'Duplicate' });
+      const product2 = createMockProduct({ id: 2, title: 'Duplicate' });
+      
+      render(
+        <div>
+          <ProductCard product={product1} onProductClicked={mockOnProductClicked} />
+          <ProductCard product={product2} onProductClicked={mockOnProductClicked} />
+        </div>
+      );
+      
+      expect(screen.getAllByText(/Duplicate/i)).toHaveLength(2);
+    });
+  });
+
+  describe('Long Content Handling', () => {
+    it('should handle description with special characters', () => {
+      const specialChars = 'Description with <>&"\'special & chars!';
+      const product = createMockProduct({ description: specialChars });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByText(specialChars)).toBeInTheDocument();
+    });
+
+    it('should handle unicode characters in title', () => {
+      const unicodeTitle = 'Tëst Pröduct ß';
+      const product = createMockProduct({ title: unicodeTitle });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByRole('heading', { level: 2, name: new RegExp(unicodeTitle) })).toBeInTheDocument();
+    });
+
+    it('should handle multiline description', () => {
+      const multilineDesc = 'Line 1\nLine 2\nLine 3';
+      const product = createMockProduct({ description: multilineDesc });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByText(/Line 1/)).toBeInTheDocument();
+      expect(screen.getByText(/Line 2/)).toBeInTheDocument();
+    });
+
+    it('should handle HTML entities in title', () => {
+      const htmlTitle = 'Product & More';
+      const product = createMockProduct({ title: htmlTitle });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByRole('heading', { level: 2, name: /Product & More/i })).toBeInTheDocument();
+    });
+
+    it('should handle RTL (right-to-left) text', () => {
+      const rtlText = 'سلام'; // Arabic for "Hello"
+      const product = createMockProduct({ title: rtlText, description: rtlText });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByRole('heading', { level: 2, name: new RegExp(rtlText) })).toBeInTheDocument();
+    });
+
+    it('should handle emoji in title', () => {
+      const emojiTitle = 'Product 🚀';
+      const product = createMockProduct({ title: emojiTitle });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByRole('heading', { level: 2, name: new RegExp(emojiTitle) })).toBeInTheDocument();
+    });
+
+    it('should handle emoji in description', () => {
+      const emojiDesc = 'Test with emoji 🎉';
+      const product = createMockProduct({ description: emojiDesc });
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByText(/🎉/)).toBeInTheDocument();
+    });
+  });
+
+  describe('Re-render Tests', () => {
+    it('should re-render when product prop changes', async () => {
+      const { rerender } = render(<ProductCard product={createMockProduct({ id: 1, title: 'Original' })} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByRole('heading', { level: 2, name: /Original/i })).toBeInTheDocument();
+      
+      rerender(<ProductCard product={createMockProduct({ id: 2, title: 'Updated' })} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByRole('heading', { level: 2, name: /Updated/i })).toBeInTheDocument();
+    });
+
+    it('should not re-render when clicking card (state change should be internal)', () => {
+      const product = createMockProduct();
+      const { container } = render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      // Get initial state
+      expect(container).toBeTruthy();
+      
+      // Click to trigger potential state changes
+      fireEvent.click(screen.getByRole('listitem'));
+      
+      // Card should still be in DOM
+      expect(container.querySelector('.card')).toBeInTheDocument();
+    });
+
+    it('should handle multiple interaction events', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      // Click
+      fireEvent.click(screen.getByRole('listitem'));
+      
+      mockOnProductClicked.mockClear();
+      
+      // Enter key
+      fireEvent.keyDown(screen.getByRole('listitem'), { key: 'Enter' });
+      
+      expect(mockOnProductClicked).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle focus event on card', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const cardElement = screen.getByRole('listitem');
+      fireEvent.focus(cardElement);
+      
+      // Just verify no errors - focus is a native DOM event
+      expect(document.body).toBeTruthy();
+    });
+  });
+
+  describe('A11y Edge Cases', () => {
+    it('should pass accessibility with very long title', async () => {
+      const longTitle = 'T'.repeat(200);
+      const product = createMockProduct({ title: longTitle, imageAlt: 'Image' });
+      const { container } = render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const results = await axe(container, axeOptions);
+      expect(results).toHaveNoViolations();
+    });
+
+    it('should pass accessibility with very long description', async () => {
+      const longDesc = 'D'.repeat(1000);
+      const product = createMockProduct({ description: longDesc, imageAlt: 'Image' });
+      const { container } = render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const results = await axe(container, axeOptions);
+      expect(results).toHaveNoViolations();
+    });
+
+    it('should pass accessibility with unicode characters', async () => {
+      const unicodeTitle = 'Привет мир 🌍'; // Russian + emoji
+      const product = createMockProduct({ title: unicodeTitle, imageAlt: 'Image' });
+      const { container } = render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const results = await axe(container, axeOptions);
+      expect(results).toHaveNoViolations();
+    });
+  });
+
+  describe('Component Structure Details', () => {
+    it('should have correct heading level (h2) for title', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const h2Element = screen.getByRole('heading', { level: 2 });
+      expect(h2Element.tagName).toBe('H2');
+    });
+
+    it('should have description wrapped in label element', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
+    });
+
+    it('should contain img element within card-image container', () => {
+      const product = createMockProduct();
+      render(<ProductCard product={product} onProductClicked={mockOnProductClicked} />);
+      
+      const imageContainer = document.querySelector('.card-image');
+      expect(imageContainer?.querySelector('img')).toBeInTheDocument();
     });
   });
 

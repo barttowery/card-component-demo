@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import styles from './product-card.module.css';
 import { ProductSummary } from '@card-component-demo/shared-models';
+import { formatCurrency } from '@card-component-demo/shared-utils';
 
 export interface ProductCardProps {
   product: ProductSummary;
@@ -23,7 +24,6 @@ export function ProductCard({ product, onProductClicked }: ProductCardProps) {
   return (
     <li
       className={styles['card']}
-      role="button"
       onClick={() => onProductClicked(product)} tabIndex={0}
       aria-label={`View details for ${product.title}`}
       onKeyDown={(e) => {
@@ -42,7 +42,7 @@ export function ProductCard({ product, onProductClicked }: ProductCardProps) {
         >
           {product.description}
         </label>
-        <label className={styles['card-price']}>${product.price.toFixed(2)}</label>
+        <label className={styles['card-price']}>{formatCurrency(product.price)}</label>
       </div>
       <div className={styles['card-image']}>
         <img src={product.image} alt={product.imageAlt} />

@@ -42,7 +42,9 @@ const meta = {
   decorators: [
     (Story) => (
       <ThemeProvider>
+        <ul>
         <Story />
+        </ul>
       </ThemeProvider>
     ),
   ],

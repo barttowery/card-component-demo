@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import styles from './product-card.module.css';
+import rawCssString from './product-card.module.css?inline';
 import { ProductSummary } from '@card-component-demo/shared-models';
 import { formatCurrency } from '@card-component-demo/shared-utils';
 
@@ -7,6 +8,8 @@ export interface ProductCardProps {
   product: ProductSummary;
   onProductClicked: (product: ProductSummary) => void;
 }
+
+export const ProductCardStyles = rawCssString;
 
 export function ProductCard({ product, onProductClicked }: ProductCardProps) {
   const labelRef = useRef<HTMLLabelElement>(null);

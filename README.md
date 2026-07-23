@@ -27,6 +27,9 @@ This project uses many tools like:
 - For the shared-ui Storybook, run `nx storybook shared-ui`. This is the Storybook for the Shared Component Library.
 - For the products-ui Storybook, run `nx storybook products-ui`. This is the Storybook for the products pages. In includes the content components for the products area with data passed in via props. The hooks to call the API are created and wired up in the products-feature package.
 
+## Running Web Components App
+The card-web-components app exposes the ProductCard component from the shared-ui package as a web component. It displays the component in the ShadowDOM to keep the styles from being affected by the web application consuming it. The product is passed in as individual properties. To run the web components application, run `nx serve card-web-components`. Make sure the card-component-demo web application is running first locally on port 4200 as the image is retrieved from that application and clicking on the card will open the product in a new window on that web application.
+
 ## Project Architecture
 
 ### Structure
@@ -38,7 +41,7 @@ This is the meat of the functionality. The following packages exist.
 - products-ui (`/packages/products-ui`) - Contains the product UI components. All data is passed in via properties (makes unit testing better). Storybook is configured and can be run via `nx storybook products-ui`.
 - shared-models (`/packages/shared-models`) - Contains the models for the product (i.e. ProductSummary).
 - shared-ui (`/packages/shared-ui`) - The shared component library for the solution. This is the bulk of the actual assignment given. Includes Jest testing. Storybook is configured and can be run via `nx storybook shared-ui`. These are intended to be shared components that could be used across multiple web sites. 
-- shared-utils (`/packages/shared-utils`) - Contains a ThemeProvider. One piece of the assignment was to apply design tokens to CSS properties in the application. The design tokens are set and applied via the ThemeProvider.
+- shared-utils (`/packages/shared-utils`) - Contains a ThemeProvider and a formatCurrency function. One piece of the assignment was to apply design tokens to CSS properties in the application. The design tokens are set and applied via the ThemeProvider.
 
 Note that in a larger project, I would create a shared folder to contain the models, ui and utils packages (along with other potentials such as data and mocks). Also each domain area (such as products would have its own folder with packages underneath.
 

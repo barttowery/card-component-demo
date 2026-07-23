@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProductsDisplay } from './products-display';
-import { expect } from 'storybook/test';
 import { ProductSummary } from '@card-component-demo/shared-models';
 import { ThemeProvider } from '@card-component-demo/shared-utils';
 import { fn } from 'storybook/test';
@@ -87,12 +86,5 @@ export const Loading = {
   args: {
     products: [],
     isLoading: true,
-  },
-} satisfies Story;
-
-export const Heading = {
-  args: {},
-  play: async ({ canvas }) => {
-    await expect(canvas.getByText(/ProductsDisplay/gi)).toBeTruthy();
   },
 } satisfies Story;

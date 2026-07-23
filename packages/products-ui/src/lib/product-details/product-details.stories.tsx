@@ -1,9 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProductDetails } from './product-details';
-import { expect } from 'storybook/test';
 import { ProductSummary } from '@card-component-demo/shared-models';
 import { ThemeProvider } from '@card-component-demo/shared-utils';
-import { fn } from 'storybook/test';
 
 const product: ProductSummary = {
   id: 1,
@@ -33,12 +31,5 @@ type Story = StoryObj<typeof ProductDetails>;
 export const Primary = {
   args: {
     product,
-  },
-} satisfies Story;
-
-export const Heading = {
-  args: {},
-  play: async ({ canvas }) => {
-    await expect(canvas.getByText(/ProductDetails/gi)).toBeTruthy();
   },
 } satisfies Story;

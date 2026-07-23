@@ -15,6 +15,7 @@ This project uses many tools like:
 - [Storybook](https://storybook.js.org/)
 - [Tanstack Query](https://tanstack.com/query/latest)
 - [Axios](https://axios.rest/)
+- [Jest](https://jestjs.io/)
 - [ESLint](https://eslint.org)
 - [Prettier](https://prettier.io)
 
@@ -29,7 +30,7 @@ This project uses many tools like:
 ## Project Architecture
 
 ### Structure
-Follows the Nx approach with apps and packages. This project is broken apart the way a large project should be broken apart to demonstrate the proper approach rather than what I would normal do on a task this size. The project is created following [Atomic Design](https://atomicdesign.bradfrost.com/) principles.
+Follows the Nx approach with apps and packages. This project is broken apart the way a large project should be broken apart to demonstrate the proper approach rather than what I would normally do on a task this size. The project is created following [Atomic Design](https://atomicdesign.bradfrost.com/) principles.
 
 ### Packages
 This is the meat of the functionality. The following packages exist.
@@ -39,7 +40,7 @@ This is the meat of the functionality. The following packages exist.
 - shared-ui (`/packages/shared-ui`) - The shared component library for the solution. This is the bulk of the actual assignment given. Includes Jest testing. Storybook is configured and can be run via `nx storybook shared-ui`. These are intended to be shared components that could be used across multiple web sites. 
 - shared-utils (`/packages/shared-utils`) - Contains a ThemeProvider. One piece of the assignment was to apply design tokens to CSS properties in the application. The design tokens are set and applied via the ThemeProvider.
 
-Note that in a larger project, I would create a shared folder to contain the models, ui and utils packages (along with other potentials such as data and mocks). Also each domain area such as products would have its own folder with packages underneath.
+Note that in a larger project, I would create a shared folder to contain the models, ui and utils packages (along with other potentials such as data and mocks). Also each domain area (such as products would have its own folder with packages underneath.
 
 ### API
 A very simple Express app to send the products and product details. The data is hardcoded. Run the API by using `nx serve api`. This runs the API at [http://localhost:3333](http://localhost:3333).

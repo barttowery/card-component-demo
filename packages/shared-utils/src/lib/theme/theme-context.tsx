@@ -10,7 +10,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 interface ThemeProviderProps {
   children: React.ReactNode;
-  themeTokens: Theme;
+  themeTokens?: Theme;
 }
 
 export function ThemeProvider({

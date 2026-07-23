@@ -70,3 +70,9 @@ export const ProductLongTitle = {
     product: productLongTitle,
   },
 } satisfies Story;
+
+export const NoImage = {
+  args: {
+    product: {...product1, image: ''},
+  },
+} satisfies Story;

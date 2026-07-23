@@ -45,7 +45,10 @@ export function ProductCard({ product, onProductClicked }: ProductCardProps) {
         <label className={styles['card-price']}>{formatCurrency(product.price)}</label>
       </div>
       <figure className={styles['card-image']}>
-        <img src={product.image} alt={product.imageAlt} />
+        { product.image ? 
+          <img src={product.image} alt={product.imageAlt} />:
+          <div className={styles['no-image']}>No product image</div>
+        }
       </figure>
     </article>
   );
